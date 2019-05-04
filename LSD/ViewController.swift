@@ -13,29 +13,21 @@ class ViewController: UIViewController , GetBalls {
     var timerMotion = Timer()
     var data: DataBall!
     var motion = CMMotionManager()
-    var test = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-                animator = UIDynamicAnimator(referenceView: self.view)
-        //                gravity = UIGravityBehavior(items: arrballs)
-                collison = UICollisionBehavior(items: arrballs) //отталкиваются друг от другу
-                collison.translatesReferenceBoundsIntoBoundary = true
-        //
-        //                gravity.angle = .random(in: 0...(.pi * 2)) //бъет по сторонам
-        //                gravity.magnitude = 1 //скорость
-        //
-        //                animator.addBehavior(gravity)
-                animator.addBehavior(collison)
+        //        animator = UIDynamicAnimator(referenceView: self.view)
+        //        gravity = UIGravityBehavior(items: arrballs)
+        //        collison = UICollisionBehavior(items: arrballs) //отталкиваются друг от другу
+        //        collison.translatesReferenceBoundsIntoBoundary = true
+        //        gravity.angle = .random(in: 0...(.pi * 2)) //бъет по сторонам
+        //        gravity.magnitude = 1 //скорость
+        //        animator.addBehavior(gravity)
+        //        animator.addBehavior(collison)
         
         data = DataBall(maxX: Int(self.view.frame.width), maxY: Int(self.view.frame.height))
         arrballs = getBalls(data)
-        
-        test.frame = CGRect(x: 40, y: 40, width: 120, height: 120)
-        test.backgroundColor = .black
-        
-        self.view.addSubview(test)
         
         arrballs.forEach {
             self.view.addSubview($0)
@@ -49,38 +41,41 @@ class ViewController: UIViewController , GetBalls {
     @objc func giro() {
         
         if motion.isAccelerometerAvailable {
-            motion.accelerometerUpdateInterval = 0.001
+            motion.accelerometerUpdateInterval = 1
             motion.startAccelerometerUpdates(to: .main) {
                 (data, error) in
                 guard let data = data, error == nil else {return}
                 
-//                myX = data.acceleration.x
-//                myY = data.acceleration.y
                 
-                self.test.center.x += CGFloat(data.acceleration.x)
-                self.test.center.y += CGFloat(data.acceleration.y)
+                let myX = data.acceleration.x
+                let myY = data.acceleration.y
                 
-                for i in self.arrballs {
-                    i.center.x += CGFloat(data.acceleration.x)
-                    i.center.y += CGFloat(data.acceleration.y)
-                }
-                
-                //self.getAngle(myX, myY)
                 
                 //self.initGravity(Double(self.getAngle(myX, -myY)))
                 
+                switch myX {
+                case 0.5...: self.initGravity(0.0)
+                case ...(-0.5): self.initGravity(.pi)
+                default: print("не отрабатывает x \(myX)")
+                }
                 
-//                if myX > 0.5 {
-//                    self.initGravity(0.0)
-//                } else if myX < -0.5 {
-//                    self.initGravity(.pi)
-//                } else if myY > 0.5 {
-//                    self.initGravity(-.pi / 2)
-//                } else if myY < -0.5 {
-//                    self.initGravity(.pi/2)
-//                }
+                switch myY {
+                case 0.5...: self.initGravity(-.pi / 2)
+                case ..<0.5: self.initGravity(.pi / 2)
+                default: print(myY)
+                }
                 
-//                print(String(format: "%2f", data.acceleration.x), String(format: "%2f", data.acceleration.y), String(format: "%2f", data.acceleration.z))
+                //                if myX > 0.5 {
+                //                    self.initGravity(0.0)
+                //                } else if myX < -0.5 {
+                //                    self.initGravity(.pi)
+                //                } else if myY > 0.5 {
+                //                    self.initGravity(-.pi / 2)
+                //                } else if myY < -0.5 {
+                //                    self.initGravity(.pi/2)
+                //                }
+                
+                //                print(String(format: "%2f", data.acceleration.x), String(format: "%2f", data.acceleration.y), String(format: "%2f", data.acceleration.z))
             }
         }
     }
@@ -127,15 +122,14 @@ class ViewController: UIViewController , GetBalls {
         
         var angle = CGFloat()
         
-//        let c = (x * x + y * y).squareRoot() //гиппотенуза
-//        let sina = y / c
-//        angle = CGFloat(asin(sina))
-//        print("c \(c), sina \(sina), angle \(angle)")
+        //        let c = (x * x + y * y).squareRoot() //гиппотенуза
+        //        let sina = y / c
+        //        angle = CGFloat(asin(sina))
+        //        print("c \(c), sina \(sina), angle \(angle)")
         
         let tanA = y / x
         angle = CGFloat(atan(tanA))
         
-        print(y / x)
         print(tanA, angle)
         return angle
     }
