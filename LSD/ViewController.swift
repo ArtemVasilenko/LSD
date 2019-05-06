@@ -15,32 +15,43 @@ class ViewController: UIViewController , GetBalls {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        initGravity()
-
-    //        animator = UIDynamicAnimator(referenceView: self.view)
-    //        gravity = UIGravityBehavior(items: arrballs)
-    //        collison = UICollisionBehavior(items: arrballs) //отталкиваются друг от другу
-    //        collison.translatesReferenceBoundsIntoBoundary = true
-    //        gravity.angle = .random(in: 0...(.pi * 2)) //бъет по сторонам
-    //        gravity.magnitude = 1 //скорость
-    //        animator.addBehavior(gravity)
-    //        animator.addBehavior(collison)
         
         data = DataBall(maxX: Int(self.view.frame.width), maxY: Int(self.view.frame.height))
         arrballs = getBalls(data)
 
-        
         arrballs.forEach {
             self.view.addSubview($0)
         }
         
         self.initGravity()
 
-        
         //timer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(getNewBalls), userInfo: nil, repeats: true)
+        
+        self.view.becomeFirstResponder()
         
         timerMotion = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(giro), userInfo: nil, repeats: true)
     }
+    
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            print("Woohooo shake shake shake")
+            arrballs += getBalls(data)
+            
+            arrballs.forEach {
+                self.view.addSubview($0)
+            }
+            
+            animator = UIDynamicAnimator(referenceView: self.view)
+            gravity = UIGravityBehavior(items: arrballs)
+            collison = UICollisionBehavior(items: arrballs) //отталкиваются друг от другу
+            collison.translatesReferenceBoundsIntoBoundary = true
+            
+            animator.addBehavior(gravity)
+            animator.addBehavior(collison)
+        }
+    }
+    
     
     @objc func giro() {
         
@@ -95,15 +106,9 @@ class ViewController: UIViewController , GetBalls {
     
     func initGravity() {
         animator = UIDynamicAnimator(referenceView: self.view)
-        
         gravity = UIGravityBehavior(items: arrballs)
-        
         collison = UICollisionBehavior(items: arrballs) //отталкиваются друг от другу
         collison.translatesReferenceBoundsIntoBoundary = true
-        
-        //gravity.angle = CGFloat(angle)
-//        gravity.magnitude = CGFloat(z * 10)
-        
         animator.addBehavior(gravity)
         animator.addBehavior(collison)
     }
@@ -115,13 +120,9 @@ class ViewController: UIViewController , GetBalls {
     
     
     func getAngle(_ x: Double, _ y: Double) -> CGFloat {
-        
         var angle = CGFloat()
-        
         let tanA = y / x
         angle = CGFloat(atan(tanA))
-        
-        print(tanA, angle)
         return angle
     }
 }
