@@ -32,8 +32,7 @@ class ViewController: UIViewController , GetBalls {
         timerMotion = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(giro), userInfo: nil, repeats: true)
     }
     
-    
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+    override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
             print("Woohooo shake shake shake")
             arrballs += getBalls(data)
@@ -51,6 +50,25 @@ class ViewController: UIViewController , GetBalls {
             animator.addBehavior(collison)
         }
     }
+    
+//    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+//        if motion == .motionShake {
+//            print("Woohooo shake shake shake")
+//            arrballs += getBalls(data)
+//            
+//            arrballs.forEach {
+//                self.view.addSubview($0)
+//            }
+//            
+//            animator = UIDynamicAnimator(referenceView: self.view)
+//            gravity = UIGravityBehavior(items: arrballs)
+//            collison = UICollisionBehavior(items: arrballs) //отталкиваются друг от другу
+//            collison.translatesReferenceBoundsIntoBoundary = true
+//            
+//            animator.addBehavior(gravity)
+//            animator.addBehavior(collison)
+//        }
+//    }
     
     
     @objc func giro() {
